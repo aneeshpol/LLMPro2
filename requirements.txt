@@ -1,0 +1,12 @@
+feedparser
+newspaper3k
+pydantic
+langchain
+langgraph
+sqlalchemy
+python-dotenv
+streamlit
+OpenAI
+langchain_openai
+langchain-community
+selenium
