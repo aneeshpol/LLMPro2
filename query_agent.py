@@ -14,13 +14,6 @@ client = OpenAI(
 
 db_url = os.getenv("DATABASE_URL")
 
-#genai.configure(api_key = os.getenv("GOOGLE_KEY"))
-
-def get_llm_response(question, prompt):
-    model = genai.GenerativeModel(model_name="models/gemini-pro")
-    response = model.generate_content([prompt[0], question])
-    return response.text
-
 def get_deepseek_response(question: str, prompt: str) -> str:
     try:
         response = client.chat.completions.create(
