@@ -6,6 +6,7 @@ Base = declarative_base()
 class NewsArticle(Base):
     __tablename__ = "articles"
 
-    link = Column(String, primary_key=True)       
+          
     title = Column(Text, nullable=False)
     summary = Column(Text)
+    link = Column(String, primary_key=True) 

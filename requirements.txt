@@ -10,3 +10,4 @@ OpenAI
 langchain_openai
 langchain-community
 selenium
+html5lib
