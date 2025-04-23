@@ -6,16 +6,17 @@ from langchain_core.prompts import ChatPromptTemplate
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-import streamlit as st
+
 llm = ChatOpenAI(
     temperature=0.2,
-    model="deepseek-ai/deepseek-chat",
+    model="deepseek/deepseek-chat-v3-0324:free",
     openai_api_key=os.getenv("OPENROUTER_API_KEY2"),
     openai_api_base="https://openrouter.ai/api/v1"
 )
 
 
 def scrape_website(website):
+
     print("Launching chrome browser")
     chrome_driver_path = "./chromedriver.exe"
     options = webdriver.ChromeOptions()
@@ -58,20 +59,27 @@ template = (
     "3. **Empty Response:** If no information matches the description, return an empty string ('')."
     "4. **Direct Data Only:** Your output should contain only the data that is explicitly requested, with no other text."
 )
-
+template_2 = ("You are a journalist. Clean and stitch together this fragmented article into one coherent story. The article is {combined_result}. Divide the article into 1,What happened 2,The context 3,Its impact, Returned the cleaned article only:")
 def parser(dom_chunks, parse_desc):
     prompt = ChatPromptTemplate.from_template(template)
     chain = prompt | llm
     results = []
 
-    for i, chunk in enumerate(dom_chunks, start = 1 ):
-        response = chain.invoke({"dom_content": chunk, "parse_desc": parse_desc })
+    for i, chunk in enumerate(dom_chunks, start=1):
+        response = chain.invoke({
+            "dom_content": chunk,
+            "parse_desc": parse_desc
+        })
         print(f"Parsed batch {i} of {len(dom_chunks)}")
-        results.append(response)
-    return "/n".join(results)
+        results.append(str(response.content).strip())
 
+    combined_result = "/n".join(results)
+    
+    instruction = ChatPromptTemplate.from_template(template_2)
+    chain2 = instruction | llm
+    final_result = chain2.invoke({"combined_result" : combined_result})
+    return final_result.content
 
 def scraping_df(link_number, data):
-    link = data.iloc[link_number, 2]
-    
-    return(link)
+    link = data.iloc[link_number, 0]    
+    return link

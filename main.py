@@ -8,6 +8,7 @@ from prompt import prompt
 from rss_links import rss_dictionary
 from lang_chain_agent import run_query_agent
 from scrape import scraping_df
+from controller import Controller
 load_dotenv()
 
 init_db()
@@ -43,14 +44,12 @@ if st.session_state.response:
         link_number=st.text_input("enter link number", key="input2")
 
         enter = st.button("Ask the question", key = "linkbutton")
-        if enter:
-            if link_number.isdigit():
-                link_number = int(link_number)
-                link = scraping_df(link_number, data)
-                st.success(f"Selected link: {link}")
+        if enter:           
+            summary = Controller.get_link(link_number, data)
+            st.write(summary)
 
-            else:
-                st.error("Please enter a valid numeric index.")
+        else:
+            st.error("Please enter a valid numeric index.")
     else:
         st.warning("No results found or query failed.")
 
